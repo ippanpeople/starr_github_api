@@ -1,14 +1,20 @@
-package apiserver
+package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	"main-module/git"
 )
 
 type Task struct {
-	Lang string `json:"langage"`
+	Lang  string  `json:"langage"`
+	Ratio float64 `json:"ratio"`
 }
+
+type Tasks []Task
 
 func HandlerRequests() {
 	http.HandleFunc("/", homePage)
@@ -22,6 +28,12 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func returnArticles(w http.ResponseWriter, r *http.Request) {
-	var task []Task
+	langages := git.User_lang()
 
+	task := Tasks{}
+
+	for langage, raito := range langages {
+		task = append(task, Task{Lang: langage, Ratio: raito})
+	}
+	json.NewEncoder(w).Encode(task)
 }

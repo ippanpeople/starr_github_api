@@ -1,16 +1,16 @@
 package git
 
 import (
-	"fmt"
+	"math"
 )
 
 type Repository struct {
 	Name map[string]int
 }
 
-func User_lang() {
+func User_lang() map[string]float64 {
 	totalCount := 0
-	username := "Yoshiki217"
+	username := ""
 	stocks := map[string]float64{}
 	//repos.goからユーザのリポジトリを取得
 	re := Repo_search(username)
@@ -35,11 +35,11 @@ func User_lang() {
 			}
 		}
 	}
-
-	// fmt.Println(stocks)
-	// fmt.Println(totalCount)
+	// // fmt.Println(totalCount)
 	for languages, count := range stocks {
-		percentage := float64(count) / float64(totalCount) * 100
-		fmt.Printf("%s, 使用割合 %.1f\n", languages, percentage)
+		percentage := math.Round((float64(count)/float64(totalCount)*100)*10) / 10
+		stocks[languages] = percentage
 	}
+
+	return stocks
 }
