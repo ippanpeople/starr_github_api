@@ -9,12 +9,24 @@ import (
 	"main-module/git"
 )
 
+//	type Task struct {
+//		Lang    string  `json:"langage"`
+//		Ratio   float64 `json:"ratio"`
+//	}
 type Task struct {
-	Lang  string  `json:"langage"`
-	Ratio float64 `json:"ratio"`
+	Count     int `json:"count"`
+	Languages []struct {
+		Lang  string  `json:"language"`
+		Ratio float64 `json:"ratio"`
+	} `json:"lang"`
+}
+
+type Count struct {
+	Number int `json:"number"`
 }
 
 type Tasks []Task
+type Counts []Count
 
 func HandlerRequests() {
 	http.HandleFunc("/", homePage)
@@ -30,10 +42,21 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 func returnArticles(w http.ResponseWriter, r *http.Request) {
 	langages := git.User_lang()
 
-	task := Tasks{}
+	var task Task
+	// var counts Counts
 
-	for langage, raito := range langages {
-		task = append(task, Task{Lang: langage, Ratio: raito})
+	for lang, ratio := range langages {
+		if lang == "count" {
+			task.Count = int(ratio)
+		} else {
+			task.Languages = append(task.Languages, struct {
+				Lang  string  `json:"language"`
+				Ratio float64 `json:"ratio"`
+			}{
+				Lang:  lang,
+				Ratio: ratio,
+			})
+		}
 	}
 	json.NewEncoder(w).Encode(task)
 }
